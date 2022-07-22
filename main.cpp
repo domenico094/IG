@@ -273,7 +273,7 @@ void keyboard(unsigned char key, int x,int y) {
                 wall = true;
             glutPostRedisplay();
         break;
-    // case 'f':
+     case 'f':
     //     if(!fullScreen) {
     //             fullScreen = true;
     //             glutFullScreen();
