@@ -39,7 +39,8 @@ void reshape(int, int);
 void mainDisplay();
 void drawLabyrinth();
 void texture();
-void keyboardSpecial(int, int, int); void keyboard(unsigned char,int,int);
+void keyboardSpecial(int, int, int);
+void keyboard(unsigned char, int, int);
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
@@ -55,8 +56,6 @@ int main(int argc, char **argv)
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(keyboardSpecial);
     glutReshapeFunc(reshape);
-
-    
 
     texture();
 
@@ -150,7 +149,6 @@ void mainDisplay()
     gluLookAt(eyeX, eyeY, eyeZ, centerX, centerY, 1.0, 0.0, 0.0, 1.0);
     drawLabyrinth();
 
-   
     glPopMatrix();
     glutSwapBuffers();
 }
@@ -195,15 +193,18 @@ void texture()
 bool collision(bool flag)
 {
     float speed2 = speed + 0.2;
-    int x; int y;
-if(flag == true) 
-{
-     x = (int)(((eyeX) / (proporzione)) + speed2 * cos((alpha * pgreco) / 180));
-    y = (int)(((eyeY) / (proporzione)) + speed2 * sin((alpha * pgreco) / 180));
-} else {
-     x = (int)(((eyeX) / (proporzione)) - speed2 * cos((alpha * pgreco) / 180));
-     y = (int)(((eyeY) / (proporzione)) - speed2 * sin((alpha * pgreco) / 180));
-}
+    int x;
+    int y;
+    if (flag == true)
+    {
+        x = (int)(((eyeX) / (proporzione)) + speed2 * cos((alpha * pgreco) / 180));
+        y = (int)(((eyeY) / (proporzione)) + speed2 * sin((alpha * pgreco) / 180));
+    }
+    else
+    {
+        x = (int)(((eyeX) / (proporzione)) - speed2 * cos((alpha * pgreco) / 180));
+        y = (int)(((eyeY) / (proporzione)) - speed2 * sin((alpha * pgreco) / 180));
+    }
     if (mappa[x][y] == 3)
     {
         return true;
@@ -244,7 +245,7 @@ void keyboardSpecial(int key, int w, int h)
             }
 
             break;
-            
+
         case GLUT_KEY_DOWN:
             if (!collision(false))
             {
@@ -263,166 +264,169 @@ void keyboardSpecial(int key, int w, int h)
     }
 }
 
-void keyboard(unsigned char key, int x,int y) {
+void keyboard(unsigned char key, int x, int y)
+{
     switch (key)
     {
     case 'w':
-        if(wall)
-                wall = false;
-            else 
-                wall = true;
-            glutPostRedisplay();
+        if (wall)
+            wall = false;
+        else
+            wall = true;
+        glutPostRedisplay();
         break;
-     case 'f':
-    //     if(!fullScreen) {
-    //             fullScreen = true;
-    //             glutFullScreen();
-       
-            glutPostRedisplay();
-        break;
-    
-    default:
-        break;
-    }
-}
-
-// drawLabirynt
-void drawFloor(int i, int j)
-{
-
-    i = i * proporzione;
-    j = j * proporzione;
-    int ip = i + proporzione;
-    int jp = j + proporzione;
-
-    glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-    glBegin(GL_QUADS);
-    glNormal3f(0, 0, 1);
-    glTexCoord2f(0, 0);
-    glVertex3f(jp, i, 0.0);
-
-    glTexCoord2f(1, 0);
-    glVertex3f(j, i, 0.0);
-
-    glTexCoord2f(1, 1);
-    glVertex3f(j, ip, 0.0);
-
-    glTexCoord2f(0, 1);
-    glVertex3f(jp, ip, 0.0);
-    glEnd();
-}
-
-void drawCeiling(int i, int j)
-{
-    i = i * proporzione;
-    j = j * proporzione;
-    int ip = i + proporzione;
-    int jp = j + proporzione;
-
-    glBindTexture(GL_TEXTURE_2D, textures[2]);
-
-    glBegin(GL_QUADS);
-    glNormal3f(0, 0, 1);
-    glTexCoord2f(0, 0);
-    glVertex3f(jp, i, proporzione);
-
-    glTexCoord2f(1, 0);
-    glVertex3f(j, i, proporzione);
-
-    glTexCoord2f(1, 1);
-    glVertex3f(j, ip, proporzione);
-
-    glTexCoord2f(0, 1);
-    glVertex3f(jp, ip, proporzione);
-    glEnd();
-}
-
-void drawWall(int i, int j)
-{
-
-    i = i * proporzione;
-    j = j * proporzione;
-    int ip = i + proporzione;
-    int jp = j + proporzione;
-    glBindTexture(GL_TEXTURE_2D, textures[1]);
-
-    glBegin(GL_QUADS);
-
-    // Parte superiore dei muri => "coperchio cubo"
-    glNormal3fv(normalUp);
-    glTexCoord2f(1, 0);
-    glVertex3f(j, i, proporzione);
-    glTexCoord2f(1, 1);
-    glVertex3f(j, ip, proporzione);
-    glTexCoord2f(0, 1);
-    glVertex3f(jp, ip, proporzione);
-    glTexCoord2f(0, 0);
-    glVertex3f(jp, i, proporzione);
-
-    glNormal3fv(normalFront);
-    glTexCoord2f(1, 1);
-    glVertex3f(jp, ip, proporzione);
-    glTexCoord2f(0, 1);
-    glVertex3f(j, ip, proporzione);
-    glTexCoord2f(0, 0);
-    glVertex3f(j, ip, -proporzione);
-    glTexCoord2f(1, 0);
-    glVertex3f(jp, ip, -proporzione);
-
-    glNormal3fv(normalLeft);
-    glTexCoord2f(1, 1);
-    glVertex3f(j, ip, proporzione);
-    glTexCoord2f(0, 1);
-    glVertex3f(j, i, proporzione);
-    glTexCoord2f(0, 0);
-    glVertex3f(j, i, -proporzione);
-    glTexCoord2f(1, 0);
-    glVertex3f(j, ip, -proporzione);
-
-    // lato
-
-    glNormal3fv(normalFront);
-    glTexCoord2f(0, 0);
-    glVertex3f(j, i, -proporzione);
-    glTexCoord2f(1, 0);
-    glVertex3f(jp, i, -proporzione);
-    glTexCoord2f(1, 1);
-    glVertex3f(jp, i, proporzione);
-    glTexCoord2f(0, 1);
-    glVertex3f(j, i, proporzione);
-
-    // lato
-    glNormal3fv(normalRight);
-    glTexCoord2f(0, 1);
-    glVertex3f(jp, ip, proporzione);
-    glTexCoord2f(1, 1);
-    glVertex3f(jp, i, proporzione);
-    glTexCoord2f(1, 0);
-    glVertex3f(jp, i, -proporzione);
-    glTexCoord2f(0, 0);
-    glVertex3f(jp, ip, -proporzione);
-    glEnd();
-}
-void drawLabyrinth()
-{
-    for (unsigned int i = 0; i < dim; ++i)
-    {
-        for (unsigned int j = 0; j < dim; ++j)
+    case 'f':
+        if (!fullScreen)
         {
-            drawFloor(i, j);
-            if (eyeZ <= 1.0)
-                drawCeiling(j, i);
-            if (mappa[i][j] == 3)
+            fullScreen = true;
+            glutFullScreen();
+        }
+            glutPostRedisplay();
+
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    // drawLabirynt
+    void drawFloor(int i, int j)
+    {
+
+        i = i * proporzione;
+        j = j * proporzione;
+        int ip = i + proporzione;
+        int jp = j + proporzione;
+
+        glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+        glBegin(GL_QUADS);
+        glNormal3f(0, 0, 1);
+        glTexCoord2f(0, 0);
+        glVertex3f(jp, i, 0.0);
+
+        glTexCoord2f(1, 0);
+        glVertex3f(j, i, 0.0);
+
+        glTexCoord2f(1, 1);
+        glVertex3f(j, ip, 0.0);
+
+        glTexCoord2f(0, 1);
+        glVertex3f(jp, ip, 0.0);
+        glEnd();
+    }
+
+    void drawCeiling(int i, int j)
+    {
+        i = i * proporzione;
+        j = j * proporzione;
+        int ip = i + proporzione;
+        int jp = j + proporzione;
+
+        glBindTexture(GL_TEXTURE_2D, textures[2]);
+
+        glBegin(GL_QUADS);
+        glNormal3f(0, 0, 1);
+        glTexCoord2f(0, 0);
+        glVertex3f(jp, i, proporzione);
+
+        glTexCoord2f(1, 0);
+        glVertex3f(j, i, proporzione);
+
+        glTexCoord2f(1, 1);
+        glVertex3f(j, ip, proporzione);
+
+        glTexCoord2f(0, 1);
+        glVertex3f(jp, ip, proporzione);
+        glEnd();
+    }
+
+    void drawWall(int i, int j)
+    {
+
+        i = i * proporzione;
+        j = j * proporzione;
+        int ip = i + proporzione;
+        int jp = j + proporzione;
+        glBindTexture(GL_TEXTURE_2D, textures[1]);
+
+        glBegin(GL_QUADS);
+
+        // Parte superiore dei muri => "coperchio cubo"
+        glNormal3fv(normalUp);
+        glTexCoord2f(1, 0);
+        glVertex3f(j, i, proporzione);
+        glTexCoord2f(1, 1);
+        glVertex3f(j, ip, proporzione);
+        glTexCoord2f(0, 1);
+        glVertex3f(jp, ip, proporzione);
+        glTexCoord2f(0, 0);
+        glVertex3f(jp, i, proporzione);
+
+        glNormal3fv(normalFront);
+        glTexCoord2f(1, 1);
+        glVertex3f(jp, ip, proporzione);
+        glTexCoord2f(0, 1);
+        glVertex3f(j, ip, proporzione);
+        glTexCoord2f(0, 0);
+        glVertex3f(j, ip, -proporzione);
+        glTexCoord2f(1, 0);
+        glVertex3f(jp, ip, -proporzione);
+
+        glNormal3fv(normalLeft);
+        glTexCoord2f(1, 1);
+        glVertex3f(j, ip, proporzione);
+        glTexCoord2f(0, 1);
+        glVertex3f(j, i, proporzione);
+        glTexCoord2f(0, 0);
+        glVertex3f(j, i, -proporzione);
+        glTexCoord2f(1, 0);
+        glVertex3f(j, ip, -proporzione);
+
+        // lato
+
+        glNormal3fv(normalFront);
+        glTexCoord2f(0, 0);
+        glVertex3f(j, i, -proporzione);
+        glTexCoord2f(1, 0);
+        glVertex3f(jp, i, -proporzione);
+        glTexCoord2f(1, 1);
+        glVertex3f(jp, i, proporzione);
+        glTexCoord2f(0, 1);
+        glVertex3f(j, i, proporzione);
+
+        // lato
+        glNormal3fv(normalRight);
+        glTexCoord2f(0, 1);
+        glVertex3f(jp, ip, proporzione);
+        glTexCoord2f(1, 1);
+        glVertex3f(jp, i, proporzione);
+        glTexCoord2f(1, 0);
+        glVertex3f(jp, i, -proporzione);
+        glTexCoord2f(0, 0);
+        glVertex3f(jp, ip, -proporzione);
+        glEnd();
+    }
+    void drawLabyrinth()
+    {
+        for (unsigned int i = 0; i < dim; ++i)
+        {
+            for (unsigned int j = 0; j < dim; ++j)
             {
-                drawWall(j, i);
-            }
-            else if (mappa[i][j] == 1 && !wall)
-            {
-                drawWall(j, i);
+                drawFloor(i, j);
+                if (eyeZ <= 1.0)
+                    drawCeiling(j, i);
+                if (mappa[i][j] == 3)
+                {
+                    drawWall(j, i);
+                }
+                else if (mappa[i][j] == 1 && !wall)
+                {
+                    drawWall(j, i);
+                }
             }
         }
     }
-}
 
-// timer
+    // timer
