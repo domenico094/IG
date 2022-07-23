@@ -47,6 +47,8 @@ void reshape(int, int);
 void topDisplay();
 void mainDisplay();
 void drawLabyrinth();
+void handlerCube(float, float);
+void drawPlayer(int, int);
 void texture();
 void keyboardSpecial(int, int, int);
 void keyboard(unsigned char, int, int);
@@ -162,8 +164,20 @@ void mainDisplay()
     gluLookAt(eyeX, eyeY, eyeZ, centerX, centerY, 1.0, 0.0, 0.0, 1.0);
     drawLabyrinth();
 
+    if (easy)
+    {
+        float x = eyeX / proporzione;
+        float y = eyeY / proporzione;
+        //   handlerCube(y,x);
+        drawPlayer(y, x);
+    }
+
     glPopMatrix();
     glutSwapBuffers();
+}
+
+void drawPlayer(int j, int i)
+{
 }
 
 // printbitmap
@@ -194,24 +208,24 @@ void topDisplay()
         printbitmap("Timer:", -0.99, -0.5);
         printbitmap(strTimer, -0.92, -0.5);
 
-        printbitmap("sec  |  f : FULL/NORMAL SCREEN  |  w : WALL/NOT WALL  |  e : EASY/NORMAL  |  esc : QUIT", -0.88, -0.5); 
+        printbitmap("sec  |  f : FULL/NORMAL SCREEN  |  w : WALL/NOT WALL  |  e : EASY/NORMAL  |  esc : QUIT", -0.88, -0.5);
     }
     else if (win)
     {
         glClearColor(0.0, 1.0, 0.0, 1.0); // green
         printbitmap("HAI VINTO      |    esc : QUIT", -0.99, -0.5);
         printbitmap("TIMER CHIUSURA FINESTRA: ", -0.70, -0.5);
-         printbitmap(strTimerCloseWindow, -0.42, -0.5);
-         printbitmap("sec", -0.38, -0.5);
+        printbitmap(strTimerCloseWindow, -0.42, -0.5);
+        printbitmap("sec", -0.38, -0.5);
     }
     else if (lose)
     {
         glClearColor(1.0, 0.0, 0.0, 0.0); // red
 
-        printbitmap("HAI PERSO      |    esc : QUIT", -0.99, -0.5); 
-          printbitmap("TIMER CHIUSURA FINESTRA: ", -0.70, -0.5);
-         printbitmap(strTimerCloseWindow, -0.42, -0.5);
-         printbitmap("sec", -0.38, -0.5);
+        printbitmap("HAI PERSO      |    esc : QUIT", -0.99, -0.5);
+        printbitmap("TIMER CHIUSURA FINESTRA: ", -0.70, -0.5);
+        printbitmap(strTimerCloseWindow, -0.42, -0.5);
+        printbitmap("sec", -0.38, -0.5);
     }
 
     gluLookAt(eyeX, eyeX, 19.5, eyeX + 0.1, eyeY, eyeZ, 0.0,
@@ -379,7 +393,7 @@ void keyboard(unsigned char key, int x, int y)
     default:
         break;
     }
-    if(key == 27)
+    if (key == 27)
         exit(0);
 }
 
@@ -463,9 +477,9 @@ void drawWall(int i, int j)
     glTexCoord2f(0, 1);
     glVertex3f(j, ip, proporzione);
     glTexCoord2f(0, 0);
-    glVertex3f(j, ip, -proporzione);
+    glVertex3f(j, ip,0.0);
     glTexCoord2f(1, 0);
-    glVertex3f(jp, ip, -proporzione);
+    glVertex3f(jp, ip, 0.0);
 
     glNormal3fv(normalLeft);
     glTexCoord2f(1, 1);
@@ -473,17 +487,17 @@ void drawWall(int i, int j)
     glTexCoord2f(0, 1);
     glVertex3f(j, i, proporzione);
     glTexCoord2f(0, 0);
-    glVertex3f(j, i, -proporzione);
+    glVertex3f(j, i, 0.0);
     glTexCoord2f(1, 0);
-    glVertex3f(j, ip, -proporzione);
+    glVertex3f(j, ip, 0.0);
 
     // lato
 
     glNormal3fv(normalFront);
     glTexCoord2f(0, 0);
-    glVertex3f(j, i, -proporzione);
+    glVertex3f(j, i, 0.0);
     glTexCoord2f(1, 0);
-    glVertex3f(jp, i, -proporzione);
+    glVertex3f(jp, i, 0.0);
     glTexCoord2f(1, 1);
     glVertex3f(jp, i, proporzione);
     glTexCoord2f(0, 1);
@@ -496,9 +510,9 @@ void drawWall(int i, int j)
     glTexCoord2f(1, 1);
     glVertex3f(jp, i, proporzione);
     glTexCoord2f(1, 0);
-    glVertex3f(jp, i, -proporzione);
+    glVertex3f(jp, i, 0.0);
     glTexCoord2f(0, 0);
-    glVertex3f(jp, ip, -proporzione);
+    glVertex3f(jp, ip, 0.0);
     glEnd();
 }
 GLfloat l = 1.0;
@@ -606,7 +620,7 @@ void trasformIntoSphere()
     gluQuadricTexture(q, true);
     gluSphere(q, dimensioneSferaT, 200, 200);
 }
-void handlerCube(int i, int j)
+void handlerCube(float i, float j)
 {
 
     glPushMatrix();
@@ -672,11 +686,10 @@ void Timer(int sec)
         }
         else
         {
-            // gioco = false;
             lose = true;
         }
     }
-     if (lose || win)
+    if (lose || win)
     {
         if (timerCloseWindow > 0)
             timerCloseWindow--;
