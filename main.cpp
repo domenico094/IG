@@ -22,7 +22,7 @@ GLfloat coloreNebbia[] = {0.4, 0.4, 0.4, 0};
 GLfloat posLuceAmbiente[] = {10, 10, 10, 1.0};
 
 GLfloat normalUp[3] = {0, 0, 1};
-// GLfloat normalDown[3] = {0, 0, -1};
+GLfloat normalDown[3] = {0, 0, -1};
 GLfloat normalFront[3] = {1, 1, 0};
 GLfloat normalRight[3] = {-1, 1, 0};
 GLfloat normalLeft[3] = {1, -1, 0};
@@ -48,7 +48,7 @@ void topDisplay();
 void mainDisplay();
 void drawLabyrinth();
 void handlerCube(float, float);
-void drawPlayer(int, int);
+void drawPlayer(float, float);
 void texture();
 void keyboardSpecial(int, int, int);
 void keyboard(unsigned char, int, int);
@@ -104,8 +104,8 @@ void initMap()
 void inizializza()
 {
     initMap();
-    int x = getRandInt();
-    int y = getRandInt();
+    int x = 1; // getRandInt();
+    int y = 1; // getRandInt();
     while (mappa[x][y] == 1 || mappa[x][y] == 2 || mappa[x][y] == 3)
     {
         x = getRandInt();
@@ -126,7 +126,7 @@ void init()
 
     glEnable(GL_LIGHTING);
 
-    glShadeModel(GL_SMOOTH);
+    // glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
     glLightfv(GL_LIGHT0, GL_AMBIENT, coloreLuceAmbiente);
@@ -136,8 +136,8 @@ void init()
     glEnable(GL_LIGHT0);
 
     glFogfv(GL_FOG_COLOR, coloreNebbia);
-    glFogf(GL_FOG_START, -2);
-    glFogf(GL_FOG_END, 11);
+    glFogf(GL_FOG_START, 3);
+    glFogf(GL_FOG_END, 10);
     glFogi(GL_FOG_MODE, GL_LINEAR);
     glEnable(GL_FOG);
 
@@ -169,15 +169,34 @@ void mainDisplay()
         float x = eyeX / proporzione;
         float y = eyeY / proporzione;
         //   handlerCube(y,x);
-        drawPlayer(y, x);
+        drawPlayer(x, y);
     }
 
     glPopMatrix();
     glutSwapBuffers();
 }
 
-void drawPlayer(int j, int i)
-{
+void drawPlayer(float j, float i)
+{   
+    i = i * proporzione;
+    j = j * proporzione;
+    float ip = i + proporzione / 4;
+    float jp = j + proporzione / 4;
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+
+    glBegin(GL_QUADS);
+
+    // Parte superiore dei muri => "coperchio cubo"
+    glNormal3fv(normalUp);
+    glTexCoord2f(1, 0);
+    glVertex3f(j, i, 1.0);
+    glTexCoord2f(1, 1);
+    glVertex3f(j, ip, 1.0);
+    glTexCoord2f(0, 1);
+    glVertex3f(jp, ip, 1.0);
+    glTexCoord2f(0, 0);
+    glVertex3f(jp, i, 1.0);
+    glEnd();
 }
 
 // printbitmap
@@ -292,7 +311,7 @@ bool collision(bool flag)
     {
         return true;
     }
-    else if (mappa[x + 1][y + 1] == 2 || mappa[x + 1][y] == 2 || mappa[x][y + 1] == 2 || mappa[x][y] == 2)
+    else if ( mappa[x + 1][y] == 2 || mappa[x][y + 1] == 2 || mappa[x][y] == 2)
     {
         win = true;
         return true;
@@ -477,7 +496,7 @@ void drawWall(int i, int j)
     glTexCoord2f(0, 1);
     glVertex3f(j, ip, proporzione);
     glTexCoord2f(0, 0);
-    glVertex3f(j, ip,0.0);
+    glVertex3f(j, ip, 0.0);
     glTexCoord2f(1, 0);
     glVertex3f(jp, ip, 0.0);
 
@@ -515,133 +534,110 @@ void drawWall(int i, int j)
     glVertex3f(jp, ip, 0.0);
     glEnd();
 }
-GLfloat l = 1.0;
-void drawCube(int i, GLfloat p)
+void drawCube(int i)
 {
+    
+    GLfloat x = 0.5, z = 1.5;
 
-    GLfloat h = l / 2;
-    GLfloat x1 = h * p;
-    GLfloat yh1 = (-1 * h) * p;
-    GLfloat x2 = (-1 * h) * p;
-    GLfloat yh2 = (h)*p;
-    GLfloat x3 = (-1 * h) * p;
-    GLfloat yh3 = (-1 * h) * p;
-    GLfloat x4 = h * p;
-    GLfloat yh4 = h * p;
-    GLfloat l1 = l - (h * p);
-    GLfloat l2 = l + (h * p);
     glBindTexture(GL_TEXTURE_2D, textures[i]);
+    glBegin(GL_QUADS);
+    glNormal3fv(normalUp);
+    glTexCoord2f(1, 0);
+    glVertex3f(x, -x, x);
+    glTexCoord2f(1, 1);
+    glVertex3f(x, -x, z);
+    glTexCoord2f(0, 1);
+    glVertex3f(-x, -x, z);
+    glTexCoord2f(0, 0);
+    glVertex3f(-x, -x, x);
 
-    glBegin(GL_QUADS);
-    glNormal3f(-1, 0, 0);
-    glTexCoord2f(1, 0);
-    glVertex3f(x1, yh1, l1);
+    glNormal3fv(normalFront);
     glTexCoord2f(1, 1);
-    glVertex3f(x1, yh1, l2);
+    glVertex3f(-x, -x, x);
     glTexCoord2f(0, 1);
-    glVertex3f(x3, yh3, l2);
+    glVertex3f(-x, -x, z);
     glTexCoord2f(0, 0);
-    glVertex3f(x3, yh3, l1);
-    glEnd();
-    glBegin(GL_QUADS);
-    glNormal3f(0, 1, 0);
+    glVertex3f(-x, x, z);
     glTexCoord2f(1, 0);
-    glVertex3f(x3, yh3, l1);
-    glTexCoord2f(1, 1);
-    glVertex3f(x3, yh3, l2);
-    glTexCoord2f(0, 1);
-    glVertex3f(x2, yh2, l2);
-    glTexCoord2f(0, 0);
-    glVertex3f(x2, yh2, l1);
-    glEnd();
+    glVertex3f(-x, x, x);
 
-    glBegin(GL_QUADS);
-    glNormal3f(0, -1, 0);
-    glTexCoord2f(0, 0);
-    glVertex3f(x2, yh2, l1);
-    glTexCoord2f(0, 1);
-    glVertex3f(x2, yh2, l2);
+    glNormal3fv(normalLeft);
     glTexCoord2f(1, 1);
-    glVertex3f(x4, yh4, l2);
+    glVertex3f(-x, x, x);
+    glTexCoord2f(0, 1);
+    glVertex3f(-x, x, z);
+    glTexCoord2f(0, 0);
+    glVertex3f(x, x, z);
     glTexCoord2f(1, 0);
-    glVertex3f(x4, yh4, l1);
-    glEnd();
+    glVertex3f(x, x, x);
 
-    glBegin(GL_QUADS);
-    glNormal3f(-1, 0, 0);
+    glNormal3fv(normalFront);
     glTexCoord2f(0, 0);
-    glVertex3f(x4, yh4, l1);
-    glTexCoord2f(0, 1);
-    glVertex3f(x4, yh4, l2);
-    glTexCoord2f(1, 1);
-    glVertex3f(x1, yh1, l2);
+    glVertex3f(x, x, x);
     glTexCoord2f(1, 0);
-    glVertex3f(x1, yh1, l1);
-    glEnd();
+    glVertex3f(x, x, z);
+    glTexCoord2f(1, 1);
+    glVertex3f(x, -x, z);
+    glTexCoord2f(0, 1);
+    glVertex3f(x, -x, x);
 
-    glBegin(GL_QUADS);
-    glNormal3f(0, 0, 1);
+    glNormal3fv(normalFront);
     glTexCoord2f(0, 0);
-    glVertex3f(x1, yh1, l2);
-    glTexCoord2f(0, 1);
-    glVertex3f(x3, yh3, l2);
-    glTexCoord2f(1, 1);
-    glVertex3f(x2, yh2, l2);
+    glVertex3f(x, -x, z);
     glTexCoord2f(1, 0);
-    glVertex3f(x4, yh4, l2);
-    glEnd();
+    glVertex3f(-x, -x, z);
+    glTexCoord2f(1, 1);
+    glVertex3f(-x, x, z);
+    glTexCoord2f(0, 1);
+    glVertex3f(x, x, z);
 
-    glBegin(GL_QUADS);
-    glNormal3f(0, 0, -1);
-    glTexCoord2f(0, 0);
-    glVertex3f(x1, yh1, l1);
+    // lato
+    glNormal3fv(normalRight);
     glTexCoord2f(0, 1);
-    glVertex3f(x3, yh3, l1);
+    glVertex3f(x, -x, x);
     glTexCoord2f(1, 1);
-    glVertex3f(x2, yh2, l1);
+    glVertex3f(-x, -x, x);
     glTexCoord2f(1, 0);
-    glVertex3f(x4, yh4, l1);
+    glVertex3f(-x, x, x);
+    glTexCoord2f(0, 0);
+    glVertex3f(x, x, x);
+
     glEnd();
 }
-float dimensioneSferaT = 1.0;
+
 void trasformIntoSphere()
 {
-
-    drawCube(3, 1);
-
-    if (dimensioneSferaT < 0.8)
-        dimensioneSferaT += 0.005;
-
     glBindTexture(GL_TEXTURE_2D, textures[4]);
 
     glTranslatef(0, 0, 1);
 
     GLUquadric *q = gluNewQuadric();
     gluQuadricTexture(q, true);
-    gluSphere(q, dimensioneSferaT, 200, 200);
+    gluSphere(q, 1.08, 200, 200);
 }
+
 void handlerCube(float i, float j)
 {
 
     glPushMatrix();
 
-    glTranslatef((j * proporzione), (i * proporzione), 0);
-    glRotatef(GLfloat(rotate), 0.0, 0.0, -0.1);
+    glTranslatef((j * proporzione), (i * proporzione), 0.5);
+    glRotatef(GLfloat(rotate), 0.0, 0.0, 0.1);
 
     if (win)
     {
         trasformIntoSphere();
     }
-    else
+    else if(!win)
     {
-
-        drawCube(3, 1);
+        drawCube(3);
     }
 
     glPopMatrix();
 
     glutPostRedisplay();
 }
+
 void drawLabyrinth()
 {
     for (unsigned int i = 0; i < dim; ++i)
