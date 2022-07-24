@@ -104,8 +104,8 @@ void initMap()
 void inizializza()
 {
     initMap();
-    int x = 1; // getRandInt();
-    int y = 1; // getRandInt();
+    int x = getRandInt();
+    int y = getRandInt();
     while (mappa[x][y] == 1 || mappa[x][y] == 2 || mappa[x][y] == 3)
     {
         x = getRandInt();
@@ -168,7 +168,6 @@ void mainDisplay()
     {
         float x = eyeX / proporzione;
         float y = eyeY / proporzione;
-        //   handlerCube(y,x);
         drawPlayer(x, y);
     }
 
@@ -182,20 +181,20 @@ void drawPlayer(float j, float i)
     j = j * proporzione;
     float ip = i + proporzione / 4;
     float jp = j + proporzione / 4;
-    glBindTexture(GL_TEXTURE_2D, textures[1]);
+    glBindTexture(GL_TEXTURE_2D, textures[3]);
 
     glBegin(GL_QUADS);
 
     // Parte superiore dei muri => "coperchio cubo"
     glNormal3fv(normalUp);
     glTexCoord2f(1, 0);
-    glVertex3f(j, i, 1.0);
+    glVertex3f(j, i, proporzione);
     glTexCoord2f(1, 1);
-    glVertex3f(j, ip, 1.0);
+    glVertex3f(j, ip, proporzione);
     glTexCoord2f(0, 1);
-    glVertex3f(jp, ip, 1.0);
+    glVertex3f(jp, ip, proporzione);
     glTexCoord2f(0, 0);
-    glVertex3f(jp, i, 1.0);
+    glVertex3f(jp, i, proporzione);
     glEnd();
 }
 
@@ -235,7 +234,7 @@ void topDisplay()
         printbitmap("HAI VINTO      |    esc : QUIT", -0.99, -0.5);
         printbitmap("TIMER CHIUSURA FINESTRA: ", -0.70, -0.5);
         printbitmap(strTimerCloseWindow, -0.42, -0.5);
-        printbitmap("sec", -0.38, -0.5);
+        printbitmap("sec  |  r : RESTART", -0.38, -0.5);
     }
     else if (lose)
     {
@@ -244,7 +243,7 @@ void topDisplay()
         printbitmap("HAI PERSO      |    esc : QUIT", -0.99, -0.5);
         printbitmap("TIMER CHIUSURA FINESTRA: ", -0.70, -0.5);
         printbitmap(strTimerCloseWindow, -0.42, -0.5);
-        printbitmap("sec", -0.38, -0.5);
+        printbitmap("sec  |  r : RESTART", -0.38, -0.5);
     }
 
     gluLookAt(eyeX, eyeX, 19.5, eyeX + 0.1, eyeY, eyeZ, 0.0,
@@ -412,6 +411,14 @@ void keyboard(unsigned char key, int x, int y)
     default:
         break;
     }
+    if(lose || win )
+        if(key == 'r') {
+            inizializza();
+            lose = false;
+            win = false;
+            timer = 300;
+            timerCloseWindow = 50;
+        }
     if (key == 27)
         exit(0);
 }
@@ -694,6 +701,5 @@ void Timer(int sec)
     }
     strTimer = to_string(timer);
     strTimerCloseWindow = to_string(timerCloseWindow);
-    cout << "Rimane" << timer << endl;
     glutTimerFunc(sec, Timer, sec);
 }
