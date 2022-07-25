@@ -230,7 +230,7 @@ void topDisplay()
     }
     else if (win)
     {
-        glClearColor(0.0, 1.0, 0.0, 0.0); // green
+        glClearColor(0.0, 0.5, 0.0, 0.0); // "dark" green
         printbitmap("HAI VINTO      |    esc : QUIT", -0.99, -0.5);
         printbitmap("TIMER CHIUSURA FINESTRA: ", -0.70, -0.5);
         printbitmap(strTimerCloseWindow, -0.42, -0.5);
