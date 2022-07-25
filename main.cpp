@@ -9,6 +9,7 @@ using namespace std;
 float proporzione = 4.0; // proporzione del labirinto
 // gluLookAt
 float eyeX = 0.0, eyeY = 0.0, centerX = 0.0, centerY = 0.0, eyeZ = 1.0;
+// movimenti
 float alpha = 0.0, delta_alpha = 3, pgreco = 3.14159, speed = 0.2;
 
 // variabili di gioco
@@ -19,8 +20,9 @@ int rotate = 0;
 GLfloat ambientLight [ ] = { 0.5f, 0.5f , 0.5f , 1.0f}; // slide
 GLfloat diffuseLight [ ] = { 0.7f , 0.7f , 0.7f , 1.0f } ;
 GLfloat lightPos [ ] = { -50.0f, 50.0f , 100.0f , 1.0f } ;
-GLfloat fog_color [ ] = {0.4, 0.4, 0.4, 0 } ; 
+GLfloat fog_color [ ] = {0.4, 0.4, 0.4, 0 } ; // nebbia
 
+// normal vet
 GLfloat normalUp[3] = {0, 0, 1};
 GLfloat normalFront[3] = {1, 1, 0};
 GLfloat normalRight[3] = {-1, 1, 0};
@@ -61,7 +63,7 @@ int main(int argc, char **argv)
     glutInitWindowSize(900, 800);
 
     int mainWindow = glutCreateWindow("Progetto Informatica Grafica");
-    srand(time(0));
+    srand(time(0)); // per random
     inizializza();
 
     init();
@@ -79,16 +81,17 @@ int main(int argc, char **argv)
     glutMainLoop();
     glDeleteTextures(nTexture, textures);
 }
-
-// inizializzo la mappa la posizione iniziale
+// numero random 
 int getRandInt()
 {
     int n = rand() % (dim - 1);
     return n;
 }
+// inizializzo la mappa la posizione iniziale
 
 void initMap()
-{
+{   
+    //  leggo da input la mappa
     ifstream in("mappa/mappa.txt");
     for (unsigned int i = 0; i < dim; i++)
     {
@@ -105,6 +108,7 @@ void inizializza()
     initMap();
     int x = getRandInt();
     int y = getRandInt();
+    // numero random per x e y fin quando non trovo una pos 0 nella mappa
     while (mappa[x][y] == 1 || mappa[x][y] == 2 || mappa[x][y] == 3)
     {
         x = getRandInt();
@@ -123,27 +127,31 @@ void init()
 {
     glClearColor(0.4, 0.4, 0.4, 0);
 
-    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHTING);  // abilito l'uso delle luci
 
     // glShadeModel(GL_SMOOTH);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_NORMALIZE);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+    glEnable(GL_DEPTH_TEST); // attiva il depth_buffering
+    glEnable(GL_NORMALIZE); // 
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight); // setto il tipo di luce GL_AMBIENT
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight); // "" GL_DIFFUSE
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);    // "" GL_POSITION
 
-    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT0);    // abilito la luce
 
-    glFogfv(GL_FOG_COLOR, fog_color);
+    glFogfv(GL_FOG_COLOR, fog_color); // setto la nebbia
+    // range di distanza rispetto alla camera 
     glFogf(GL_FOG_START, 3);
     glFogf(GL_FOG_END, 10);
     glFogi(GL_FOG_MODE, GL_LINEAR);
-    glEnable(GL_FOG);
-
+    
+    glEnable(GL_FOG);   // abilito la nebbia
+    
+    //abilita il color traking si utilizza la chiamata alle funzioni -slide
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
+// azione da eseguire quando la finestra viene ridimensionate -slide
 void reshape(int w, int h)
 {
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
@@ -157,8 +165,10 @@ void reshape(int w, int h)
 // mainDisplay e topDisplay
 void mainDisplay()
 {
+    // per modellare la scena ressetto il depth_buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPushMatrix();
+    
+    glPushMatrix(); // inserire matrice di trasformazione corrente nella pila
 
     gluLookAt(eyeX, eyeY, eyeZ, centerX, centerY, 1.0, 0.0, 0.0, 1.0);
     drawLabyrinth();
@@ -170,8 +180,9 @@ void mainDisplay()
         drawPlayer(x, y);
     }
 
-    glPopMatrix();
-    glutSwapBuffers();
+    glPopMatrix(); // recuperare l'ultima matrice inserita
+    glutSwapBuffers(); // scambio buffer sul livello in uso per la finestra corrente
+    // se non è a doppio buffer non funziona
 }
 
 void drawPlayer(float j, float i)
@@ -204,7 +215,8 @@ void drawPlayer(float j, float i)
 // transformation when calling this function.
 void printbitmap(const string msg, double x, double y)
 {
-    glColor3f(1.0f, 1.0f, 1.0f); // sets color
+    // colore per i caratteri
+    glColor3f(1.0f, 1.0f, 1.0f); // set color white
     glRasterPos2d(x, y);
     for (string::const_iterator ii = msg.begin(); ii != msg.end(); ++ii)
     {
@@ -214,9 +226,10 @@ void printbitmap(const string msg, double x, double y)
 
 void topDisplay()
 {
+    // per modellare la scena ressetto il depth_buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glPushMatrix();
+    glPushMatrix(); // inserire matrice di trasformazione corrente nella pila
 
     if (!lose && !win)
     {
@@ -245,13 +258,11 @@ void topDisplay()
         printbitmap("sec  |  r : RESTART", -0.38, -0.5);
     }
 
-    glPopMatrix();
-
-    glutSwapBuffers();
-    glutPostRedisplay();
+    glPopMatrix();// recuperare l'ultima matrice inserita
+    glutSwapBuffers(); // scambio buffer sul livello in uso per la finestra corrente
 }
 
-// texture
+// texture - slide
 void texture()
 {
     GLbyte *pBytes = 0;
@@ -386,7 +397,7 @@ void keyboard(unsigned char key, int x, int y)
 
             glutReshapeWindow(900, 800);
         }
-        glutPostRedisplay();
+        glutPostRedisplay(); 
         break;
     case 'e':
         if (easy == false)
@@ -407,6 +418,7 @@ void keyboard(unsigned char key, int x, int y)
     default:
         break;
     }
+    // Restart 
     if(lose || win )
         if(key == 'r') {
             inizializza();
@@ -415,6 +427,7 @@ void keyboard(unsigned char key, int x, int y)
             timer = 300;
             timerCloseWindow = 50;
         }
+    // quit,press esc
     if (key == 27)
         exit(0);
 }
