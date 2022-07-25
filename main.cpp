@@ -22,7 +22,6 @@ GLfloat coloreNebbia[] = {0.4, 0.4, 0.4, 0};
 GLfloat posLuceAmbiente[] = {10, 10, 10, 1.0};
 
 GLfloat normalUp[3] = {0, 0, 1};
-GLfloat normalDown[3] = {0, 0, -1};
 GLfloat normalFront[3] = {1, 1, 0};
 GLfloat normalRight[3] = {-1, 1, 0};
 GLfloat normalLeft[3] = {1, -1, 0};
