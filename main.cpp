@@ -15,8 +15,8 @@ float alpha = 0.0, delta_alpha = 3, pgreco = 3.14159, speed = 0.2;
 bool win = false, easy = false, wall = false, lose = false, fullScreen = false;
 
 int rotate = 0;
-// init
-GLfloat coloreLuceAmbiente[] = {0.1, 0.1, 0.1, 1.0f};
+// init         
+GLfloat ambientLight [ ] = { 0.5f, 0.5f , 0.5f , 1.0f}; // slide
 GLfloat luceDiffusa[] = {0.5, 0.5, 0.5, 1.0};
 GLfloat coloreNebbia[] = {0.4, 0.4, 0.4, 0};
 GLfloat posLuceAmbiente[] = {10, 10, 10, 1.0};
@@ -129,7 +129,7 @@ void init()
     // glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, coloreLuceAmbiente);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, luceDiffusa);
     glLightfv(GL_LIGHT0, GL_POSITION, posLuceAmbiente);
 
@@ -230,7 +230,7 @@ void topDisplay()
     }
     else if (win)
     {
-        glClearColor(0.0, 1.0, 0.0, 1.0); // green
+        glClearColor(0.0, 1.0, 0.0, 0.0); // green
         printbitmap("HAI VINTO      |    esc : QUIT", -0.99, -0.5);
         printbitmap("TIMER CHIUSURA FINESTRA: ", -0.70, -0.5);
         printbitmap(strTimerCloseWindow, -0.42, -0.5);
@@ -245,9 +245,6 @@ void topDisplay()
         printbitmap(strTimerCloseWindow, -0.42, -0.5);
         printbitmap("sec  |  r : RESTART", -0.38, -0.5);
     }
-
-    gluLookAt(eyeX, eyeX, 19.5, eyeX + 0.1, eyeY, eyeZ, 0.0,
-              0.0, -1.0);
 
     glPopMatrix();
 
