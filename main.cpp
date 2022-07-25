@@ -17,9 +17,9 @@ bool win = false, easy = false, wall = false, lose = false, fullScreen = false;
 int rotate = 0;
 // init         
 GLfloat ambientLight [ ] = { 0.5f, 0.5f , 0.5f , 1.0f}; // slide
-GLfloat luceDiffusa[] = {0.5, 0.5, 0.5, 1.0};
-GLfloat coloreNebbia[] = {0.4, 0.4, 0.4, 0};
-GLfloat posLuceAmbiente[] = {10, 10, 10, 1.0};
+GLfloat diffuseLight [ ] = { 0.7f , 0.7f , 0.7f , 1.0f } ;
+GLfloat lightPos [ ] = { -50.0f, 50.0f , 100.0f , 1.0f } ;
+GLfloat fog_color [ ] = {0.4, 0.4, 0.4, 0 } ; 
 
 GLfloat normalUp[3] = {0, 0, 1};
 GLfloat normalFront[3] = {1, 1, 0};
@@ -129,12 +129,12 @@ void init()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
     glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, luceDiffusa);
-    glLightfv(GL_LIGHT0, GL_POSITION, posLuceAmbiente);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
     glEnable(GL_LIGHT0);
 
-    glFogfv(GL_FOG_COLOR, coloreNebbia);
+    glFogfv(GL_FOG_COLOR, fog_color);
     glFogf(GL_FOG_START, 3);
     glFogf(GL_FOG_END, 10);
     glFogi(GL_FOG_MODE, GL_LINEAR);
