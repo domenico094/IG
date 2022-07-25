@@ -310,7 +310,7 @@ bool collision(bool flag)
     {
         return true;
     }
-    else if ( mappa[x + 1][y] == 2 || mappa[x][y + 1] == 2 || mappa[x][y] == 2)
+    else if ( mappa[x+1][y+1] == 2 ||  mappa[x + 1][y] == 2 || mappa[x][y + 1] == 2 || mappa[x][y] == 2)
     {
         win = true;
         return true;
